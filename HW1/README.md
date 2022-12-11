@@ -1,7 +1,7 @@
 # Реализовано решение ДЗ первого семинара, а также составлен конспект по первой лекции, плюс доп информация  
 
 ## Решение ДЗ
- 1. Создайте таблицу с мобильными телефонами, используя графический интерфейс. Заполните БД данными
+ 1. <b>Создайте таблицу с мобильными телефонами, используя графический интерфейс. Заполните БД данными</b>
     + Table creation (создание таблицы по моб телефонам: id, производитель, модель, кол-во, цена)
 
           CREATE TABLE `hw1_db`.`mobile_phones` ( 
@@ -34,12 +34,12 @@
             (`manufacturer_mobile_phones`, `models_mobile_phones`, `q-ty_mobile_phones`, `price_mobile_phones`) VALUES ('Samsung', 'S100', '55', '100');
 
 
-2. Выведите название, производителя и цену для товаров, количество которых превышает 2:
+2. <b>Выведите название, производителя и цену для товаров, количество которых превышает 2:</b>
 
           SELECT models_mobile_phones, manufacturer_mobile_phones, price_mobile_phones  FROM hw1_db.mobile_phones
           where qty_mobile_phones >2;
 
-3.  Выведите весь ассортимент товаров марки “Samsung”:
+3. <b>Выведите весь ассортимент товаров марки “Samsung”:</b>
 
           SELECT * FROM hw1_db.mobile_phones
           WHERE manufacturer_mobile_phones = 'Samsung';
