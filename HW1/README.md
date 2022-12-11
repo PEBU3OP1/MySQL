@@ -76,150 +76,164 @@
 
     Разберем структуру. Для удобства текущий изучаемый элемент в запроса выделяется CAPS'ом.
 
-SELECT, FROM
+      ### SELECT, FROM
+        SELECT, FROM — обязательные элементы запроса, которые определяют выбранные столбцы, их порядок и источник данных.
 
-SELECT, FROM — обязательные элементы запроса, которые определяют выбранные столбцы, их порядок и источник данных.
+    Выбрать все (обозначается как *) из таблицы Customers:
 
-Выбрать все (обозначается как *) из таблицы Customers:
+        SELECT * FROM Customers
 
-SELECT * FROM Customers
+    Выбрать столбцы CustomerID, CustomerName из таблицы Customers:
 
-Выбрать столбцы CustomerID, CustomerName из таблицы Customers:
+        SELECT CustomerID, CustomerName FROM Customers
 
-SELECT CustomerID, CustomerName FROM Customers
 
+### WHERE
 
-WHERE
++ WHERE — необязательный элемент запроса, который используется, когда нужно отфильтровать данные по нужному условию. Очень часто внутри элемента where используются IN / NOT IN для фильтрации столбца по нескольким значениям, AND / OR для фильтрации таблицы по нескольким столбцам.
 
-WHERE — необязательный элемент запроса, который используется, когда нужно отфильтровать данные по нужному условию. Очень часто внутри элемента where используются IN / NOT IN для фильтрации столбца по нескольким значениям, AND / OR для фильтрации таблицы по нескольким столбцам.
 
-Фильтрация по одному условию и одному значению:
+  ### Операторы сравнения
+  + Операторы сравнения служат для сравнения 2 выражений, их результатом может являться ИСТИНА (1), ЛОЖЬ (0) и NULL.
 
-select * from Customers
-WHERE City = 'London'
+      Результат сравнения с NULL является NULL. Исключением является оператор эквивалентности.
 
-Фильтрация по одному условию и нескольким значениям с применением IN (включение) или NOT IN (исключение):
+| Оператор |	Описание |
+|----------|:---------:| 
+|  =       |    	Оператор - равенство
+|<=>	     |Оператор - эквивалентность. Аналогичный оператору равенства, с одним лишь исключением: в отличие от него,        оператор эквивалентности вернет ИСТИНУ при сравнении NULL <=> NULL|
+| <> или != |	Оператор - неравенство
+|<|	Оператор - меньше
+|<=|	Оператор - меньше или равно
+|>|	Оператор - больше
+|>=|	Оператор - больше или равно
 
-select * from Customers
-where City IN ('London', 'Berlin')
++  Фильтрация по одному условию и одному значению:
 
-select * from Customers
-where City NOT IN ('Madrid', 'Berlin','Bern')
+        SELECT * from Customers
+        WHERE City = 'London'
 
-Фильтрация по нескольким условиям с применением AND (выполняются все условия) или OR (выполняется хотя бы одно условие) и нескольким значениям:
+ + Фильтрация по одному условию и нескольким значениям с применением IN (включение) или NOT IN (исключение):
 
-select * from Customers
-where Country = 'Germany' AND City not in ('Berlin', 'Aachen') AND CustomerID > 15
+        select * from Customers
+        where City IN ('London', 'Berlin')
 
-select * from Customers
-where City in ('London', 'Berlin') OR CustomerID > 4
+        select * from Customers
+        where City NOT IN ('Madrid', 'Berlin','Bern')
 
-GROUP BY
+  + Фильтрация по нескольким условиям с применением AND (выполняются все условия) или OR (выполняется хотя бы одно условие) и нескольким значениям:
 
-GROUP BY — необязательный элемент запроса, с помощью которого можно задать агрегацию по нужному столбцу (например, если нужно узнать какое количество клиентов живет в каждом из городов).
+        select * from Customers
+        where Country = 'Germany' AND City not in ('Berlin', 'Aachen') AND CustomerID > 15
 
-При использовании GROUP BY обязательно:
+        select * from Customers
+        where City in ('London', 'Berlin') OR CustomerID > 4
 
-перечень столбцов, по которым делается разрез, был одинаковым внутри SELECT и внутри GROUP BY,
-агрегатные функции (SUM, AVG, COUNT, MAX, MIN) должны быть также указаны внутри SELECT с указанием столбца, к которому такая функция применяется.
+### GROUP BY
 
-Группировка количества клиентов по городу:
+  + GROUP BY — необязательный элемент запроса, с помощью которого можно задать агрегацию по нужному столбцу (например, если нужно узнать какое количество клиентов живет в каждом из городов).
 
-select City, count(CustomerID) from Customers
-GROUP BY City
+  + При использовании GROUP BY обязательно:
 
-Группировка количества клиентов по стране и городу:
+    + перечень столбцов, по которым делается разрез был одинаковым внутри SELECT и внутри GROUP BY
+    + агрегатные функции (SUM, AVG, COUNT, MAX, MIN) должны быть также указаны внутри SELECT с указанием столбца, к которому такая функция применяется.
 
-select Country, City, count(CustomerID) from Customers
-GROUP BY Country, City
+  + Группировка количества клиентов по городу:
 
-Группировка продаж по ID товара с разными агрегатными функциями: количество заказов с данным товаром и количество проданных штук товара:
+        SELECT City, count(CustomerID) from Customers
+        GROUP BY City
 
+  + Группировка количества клиентов по стране и городу:
 
-select ProductID, COUNT(OrderID), SUM(Quantity) from OrderDetails
-GROUP BY ProductID
+        select Country, City, count(CustomerID) from Customers
+        GROUP BY Country, City
 
-Группировка продаж с фильтрацией исходной таблицы. В данном случае на выходе будет таблица с количеством клиентов по городам Германии:
+ + Группировка продаж по ID товара с разными агрегатными функциями: количество заказов с данным товаром и количество проданных штук товара:
 
 
-select City, count(CustomerID) from Customers
-WHERE Country = 'Germany'
-GROUP BY City
+        select ProductID, COUNT(OrderID), SUM(Quantity) from OrderDetails
+        GROUP BY ProductID
 
-Переименование столбца с агрегацией с помощью оператора AS. По умолчанию название столбца с агрегацией равно примененной агрегатной функции, что далее может быть не очень удобно для восприятия.
+  + Группировка продаж с фильтрацией исходной таблицы. В данном случае на выходе будет таблица с количеством клиентов по городам Германии:
 
-select City, count(CustomerID) AS Number_of_clients from Customers
-group by City
 
-HAVING
+        select City, count(CustomerID) from Customers
+        WHERE Country = 'Germany'
+        GROUP BY City
 
-HAVING — необязательный элемент запроса, который отвечает за фильтрацию на уровне сгруппированных данных (по сути, WHERE, но только на уровень выше).
+  + Переименование столбца с агрегацией с помощью оператора AS. По умолчанию название столбца с агрегацией равно примененной агрегатной функции, что далее может быть не очень удобно для восприятия.
 
-Фильтрация агрегированной таблицы с количеством клиентов по городам, в данном случае оставляем в выгрузке только те города, в которых не менее 5 клиентов:
+        select City, count(CustomerID) AS Number_of_clients from Customers
+        group by City
 
+### HAVING
 
-select City, count(CustomerID) from Customers
-group by City
-HAVING count(CustomerID) >= 5 
+  + HAVING — необязательный элемент запроса, который отвечает за фильтрацию на уровне сгруппированных данных (по сути, WHERE, но только на уровень выше).
 
+    + Фильтрация агрегированной таблицы с количеством клиентов по городам, в данном случае оставляем в выгрузке только те города, в которых не менее 5 клиентов:
 
-В случае с переименованным столбцом внутри HAVING можно указать как и саму агрегирующую конструкцию count(CustomerID), так и новое название столбца number_of_clients:
+          select City, count(CustomerID) from Customers
+          group by City
+          HAVING count(CustomerID) >= 5 
 
 
-select City, count(CustomerID) as number_of_clients from Customers
-group by City
-HAVING number_of_clients >= 5
+  + В случае с переименованным столбцом внутри HAVING можно указать как и саму агрегирующую конструкцию count(CustomerID), так и новое название столбца number_of_clients:
 
-Пример запроса, содержащего WHERE и HAVING. В данном запросе сначала фильтруется исходная таблица по пользователям, рассчитывается количество клиентов по городам и остаются только те города, где количество клиентов не менее 5:
 
+          select City, count(CustomerID) as number_of_clients from Customers
+          group by City
+          HAVING number_of_clients >= 5
 
-select City, count(CustomerID) as number_of_clients from Customers
-WHERE CustomerName not in ('Around the Horn','Drachenblut Delikatessend')
-group by City
-HAVING number_of_clients >= 5
+  + Пример запроса, содержащего WHERE и HAVING. В данном запросе сначала фильтруется исходная таблица по пользователям, рассчитывается количество клиентов по городам и остаются только те города, где количество клиентов не менее 5:
 
-ORDER BY
 
-ORDER BY — необязательный элемент запроса, который отвечает за сортировку таблицы.
+        select City, count(CustomerID) as number_of_clients from Customers
+        WHERE CustomerName not in ('Around the Horn','Drachenblut Delikatessend')
+        group by City
+        HAVING number_of_clients >= 5
 
-Простой пример сортировки по одному столбцу. В данном запросе осуществляется сортировка по городу, который указал клиент:
+### ORDER BY
 
+  + ORDER BY — необязательный элемент запроса, который отвечает за сортировку таблицы.
 
-select * from Customers
-ORDER BY City
+  + Простой пример сортировки по одному столбцу. В данном запросе осуществляется сортировка по городу, который указал клиент:
 
-Осуществлять сортировку можно и по нескольким столбцам, в этом случае сортировка происходит по порядку указанных столбцов:
 
+    select * from Customers
+    ORDER BY City
 
-select * from Customers
-ORDER BY Country, City
+  + Осуществлять сортировку можно и по нескольким столбцам, в этом случае сортировка происходит по порядку указанных столбцов:
 
-По умолчанию сортировка происходит по возрастанию для чисел и в алфавитном порядке для текстовых значений. Если нужна обратная сортировка, то в конструкции ORDER BY после названия столбца надо добавить DESC:
 
+        select * from Customers
+        ORDER BY Country, City
 
-select * from Customers
-order by CustomerID DESC
+  + По умолчанию сортировка происходит по возрастанию для чисел и в алфавитном порядке для текстовых значений. Если нужна обратная сортировка, то в конструкции ORDER BY после названия столбца надо добавить DESC:
 
-Обратная сортировка по одному столбцу и сортировка по умолчанию по второму:
 
-select * from Customers
-order by Country DESC, City
+        select * from Customers
+        order by CustomerID DESC
 
-JOIN
+  + Обратная сортировка по одному столбцу и сортировка по умолчанию по второму:
 
-JOIN — необязательный элемент, используется для объединения таблиц по ключу, который присутствует в обеих таблицах. Перед ключом ставится оператор ON.
+        select * from Customers
+        order by Country DESC, City
 
-Запрос, в котором соединяем таблицы Order и Customer по ключу CustomerID, при этом перед названиям столбца ключа добавляется название таблицы через точку:
+### JOIN
 
-select * from Orders
-JOIN Customers ON Orders.CustomerID = Customers.CustomerID
+  + JOIN — необязательный элемент, используется для объединения таблиц по ключу, который присутствует в обеих таблицах. Перед ключом ставится оператор ON.
 
-Нередко может возникать ситуация, когда надо промэппить одну таблицу значениями из другой. В зависимости от задачи, могут использоваться разные типы присоединений. INNER JOIN — пересечение, RIGHT/LEFT JOIN для мэппинга одной таблицы знаениями из другой,
+  + Запрос, в котором соединяем таблицы Order и Customer по ключу CustomerID, при этом перед названиям столбца ключа добавляется название таблицы через точку:
 
+        select * from Orders
+        JOIN Customers ON Orders.CustomerID = Customers.CustomerID
 
-select * from Orders
-join Customers on Orders.CustomerID = Customers.CustomerID
-where Customers.CustomerID >10
+  + Нередко может возникать ситуация, когда надо промэппить одну таблицу значениями из другой. В зависимости от задачи, могут использоваться разные типы присоединений. INNER JOIN — пересечение, RIGHT/LEFT JOIN для мэппинга одной таблицы знаениями из другой,
+
+
+        select * from Orders
+        join Customers on Orders.CustomerID = Customers.CustomerID
+        where Customers.CustomerID >10
 
 Внутри всего запроса JOIN встраивается после элемента from до элемента where, пример запроса:
 
