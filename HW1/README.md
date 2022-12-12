@@ -44,6 +44,7 @@
           SELECT * FROM hw1_db.mobile_phones
           WHERE manufacturer_mobile_phones = 'Samsung';
 
+## Скрипт Python, если лень заполнять БД вручную
 
 ## Теоритическая часть (данная статья показалась интересной)
 
