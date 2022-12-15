@@ -1,7 +1,7 @@
 -- СОздаем таблицы goods и sales
 
 CREATE TABLE `hw2_db`.`goods` (
-  `idGoods` INT NOT NULL AUTO_INCREMENT,
+  `idGoods` INT AUTO_INCREMENT,
   `Goods_Name` VARCHAR(40) NOT NULL,
   `Goods_manufacturer` VARCHAR(40) NOT NULL,
   `Goods_quantity` INT NULL DEFAULT 0,
@@ -12,8 +12,8 @@ CREATE TABLE `hw2_db`.`goods` (
 
 CREATE TABLE `hw2_db`.`sales` (
   `id_sales` INT NOT NULL AUTO_INCREMENT,
-  `idGoods` INT NOT NULL,
-  `Sales_percent` INT NOT NULL DEFAULT 0,
+  `id_Goods` INT NOT NULL,
+  `Sales_val` INT NOT NULL DEFAULT 0,
   PRIMARY KEY (`id_sales`),
   FOREIGN KEY (`idGoods`) REFERENCES goods(idGoods) ON DELETE CASCADE);
 
@@ -28,10 +28,10 @@ VALUES ('Microwave oven', 'Philips', '23', 'Norway', '19000'),
 ('Microwave oven', 'Rowenta', '32', 'Germany', '100');
 
 
-INSERT INTO `hw2_db`.`sales` (`idGoods`, `Sales_percent`) VALUES ('1', '2');
-INSERT INTO `hw2_db`.`sales` (`idGoods`, `Sales_percent`) VALUES ('2', '12');
-INSERT INTO `hw2_db`.`sales` (`idGoods`, `Sales_percent`) VALUES ('3', '4');
-INSERT INTO `hw2_db`.`sales` (`idGoods`, `Sales_percent`) VALUES ('4', '1');
+INSERT INTO `hw2_db`.`sales` (`id_Goods`, `Sales_val`) VALUES ('1', '2');
+INSERT INTO `hw2_db`.`sales` (`id_Goods`, `Sales_val`) VALUES ('2', '12');
+INSERT INTO `hw2_db`.`sales` (`id_Goods`, `Sales_val`) VALUES ('3', '4');
+INSERT INTO `hw2_db`.`sales` (`id_Goods`, `Sales_val`) VALUES ('4', '1');
 
 
 
@@ -39,10 +39,41 @@ INSERT INTO `hw2_db`.`sales` (`idGoods`, `Sales_percent`) VALUES ('4', '1');
 
 SELECT Goods_Name, Goods_quantity, Sales_percent, 
 CASE
-    WHEN Goods_quantity - Sales_percent < 10 
+    WHEN Goods_quantity - Sales_val < 10 
         THEN 'Мало'
-    WHEN Goods_quantity - Sales_percent > 10 && Goods_quantity - Sales_percent < 30
+    WHEN Goods_quantity - Sales_val > 10 && Goods_quantity - Sales_percent < 30
         THEN 'Средне'
     ELSE 'МНОГО'
-END AS Category
+END AS Result
 FROM sales, goods;
+
+
+
+-- Создайте таблицу “orders”, заполните ее значениями. Покажите “полный” статус заказа, используя оператор CASE
+
+CREATE TABLE orders
+(
+    `Idorder` INT AUTO_INCREMENT PRIMARY KEY,
+    `IdGoods` INT NOT NULL,
+    `IdSales` INT NOT NULL,
+    Status VARCHAR(40),
+    FOREIGN KEY (IdGoods) REFERENCES goods(idGoods) ON DELETE CASCADE,
+    FOREIGN KEY (IdSales) REFERENCES sales(id_sales) ON DELETE CASCADE
+);
+
+
+INSERT INTO orders (IdGoods, IdSales, Status)
+VALUES ((SELECT idGoods FROM goods WHERE Goods_manufacturer= 'Philips'),  
+        (SELECT id_sales FROM sales WHERE Sales_percent = 12),  
+        'в резерве'
+), 
+     	
+      ((SELECT idGoods FROM goods WHERE Goods_manufacturer= 'Motorolla'),  
+      (SELECT id_sales FROM sales WHERE Sales_percent = 4),  
+      NULL
+); 
+
+-- покажем “полный” статус заказа, используя оператор CASE
+SELECT IdGoods, IdSales, 
+      COALESCE(Status, 'не определено') AS Contacts
+FROM orders;
