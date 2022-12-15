@@ -1,41 +1,54 @@
--- СОздаем таблицы goods и sales
+-- Создаем таблицу goods и заполняем ее
 
-CREATE TABLE `hw2_db`.`goods` (
-  `idGoods` INT AUTO_INCREMENT,
-  `Goods_Name` VARCHAR(40) NOT NULL,
-  `Goods_manufacturer` VARCHAR(40) NOT NULL,
-  `Goods_quantity` INT NULL DEFAULT 0,
-  `Goods_country` VARCHAR(45) NOT NULL,
-  `Goods_price` INT NULL DEFAULT 0,
-  PRIMARY KEY (`idGoods`));
+CREATE DATABASE homework_2db;
+USE homework_2db;
+CREATE TABLE goods (
+Goodsid INT AUTO_INCREMENT PRIMARY KEY,
+Goods_Name VARCHAR(40) NOT NULL,
+Goods_Manufacturer VARCHAR(40) NOT NULL,
+Goods_Country VARCHAR(40) NOT NULL,
+Goods_quantity INT NOT NULL DEFAULT 0,
+Goods_price INT NOT NULL DEFAULT 0
+);
 
+INSERT INTO goods (Goods_Name, Goods_Manufacturer, Goods_Country, Goods_quantity, Goods_price)
+VALUES
+('Microwave oven', 'Philips', 'Norway', 23, 19000),
+('Kettler', 'Samsung', 'Japan', 233, 8000),
+('Mobile phone', 'Motorolla', 'Russia', 13, 1000),
+('Microwave oven', 'Rowenta', 'Germany', 32, 100)
+;
 
-CREATE TABLE `hw2_db`.`sales` (
-  `id_sales` INT NOT NULL AUTO_INCREMENT,
-  `id_Goods` INT NOT NULL,
-  `Sales_val` INT NOT NULL DEFAULT 0,
-  PRIMARY KEY (`id_sales`),
-  FOREIGN KEY (`idGoods`) REFERENCES goods(idGoods) ON DELETE CASCADE);
+-- Создаем таблицу sales и заполняем ее
 
+CREATE TABLE sales(
+id INT AUTO_INCREMENT PRIMARY KEY, 
+Goods_ID INT,
+Sales_Val INT DEFAULT 0,
+FOREIGN KEY (Goods_ID) REFERENCES goods (Goodsid) ON DELETE CASCADE
+);
 
--- Заполнение таблиц
-
-
-INSERT INTO `hw2_db`.`goods` (`Goods_Name`, `Goods_manufacturer`, `Goods_quantity`, `Goods_country`, `Goods_price`) 
-VALUES ('Microwave oven', 'Philips', '23', 'Norway', '19000'),
-('Kettler', 'Samsung', '233', 'Japan', '8000'),
-('Mobile phone', 'Motorolla', '13', 'Russia', '1000'),
-('Microwave oven', 'Rowenta', '32', 'Germany', '100');
-
-
-INSERT INTO `hw2_db`.`sales` (`id_Goods`, `Sales_val`) VALUES ('1', '2');
-INSERT INTO `hw2_db`.`sales` (`id_Goods`, `Sales_val`) VALUES ('2', '12');
-INSERT INTO `hw2_db`.`sales` (`id_Goods`, `Sales_val`) VALUES ('3', '4');
-INSERT INTO `hw2_db`.`sales` (`id_Goods`, `Sales_val`) VALUES ('4', '1');
+INSERT INTO sales (Goods_ID, Sales_Val)
+VALUES 
+(1, 10),
+(2, 3),
+(3, 5),
+(4, 12);
 
 
 
 -- Сгруппируйте значений количества в 3 сегмента — меньше 100, 100-300 и больше 300. - CASE
+SELECT *,
+CASE
+	WHEN Goods_quantity < 14
+		THEN 'МАЛО'
+	WHEN Goods_quantity > 14 &&  Goods_quantity < 25
+		THEN 'СРЕДНЕ'
+	ELSE 'МНОГО'
+END AS Result
+FROM goods;
+
+-- ВАРИАЦИИ НА ТЕМУ
 
 SELECT Goods_Name, Goods_quantity, Sales_percent, 
 CASE
